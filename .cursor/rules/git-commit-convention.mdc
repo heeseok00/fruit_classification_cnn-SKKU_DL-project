@@ -1,0 +1,48 @@
+---
+description: Git Commit Message Convention - 모든 커밋 메시지에 적용되는 규칙
+alwaysApply: true
+---
+
+# Git Commit Message Convention
+
+## Format
+```
+<type>: <subject>
+
+<body> (optional)
+<footer> (optional)
+```
+
+## Types
+- `init` : initial project setup
+- `feat` : new feature
+- `fix` : bug fix
+- `docs` : documentation
+- `refactor` : code structure improvement
+- `style` : formatting (no logic change)
+- `test` : test code
+- `chore` : config / dependencies
+- `perf` : performance improvement
+- `ci` : CI/CD
+
+## Rules
+- Subject ≤ 50 characters
+- Use present tense (Add, Fix, Update)
+- Be specific — one commit = one change
+- Vague messages like "update", "fix", "change" 단독 사용 금지
+
+## Example
+```
+init: Set up project structure
+
+- Create project directories
+- Add initial README
+- Configure environment
+```
+
+## Agent 행동 규칙
+
+코드나 파일에 변경사항이 생길 때마다:
+1. 위 컨벤션에 맞는 커밋 메시지를 작성
+2. `git add` → `git commit` → `git push` 순서로 실행
+3. 커밋은 변경 단위별로 분리 (한 번에 여러 변경을 하나의 커밋으로 묶지 않기)
