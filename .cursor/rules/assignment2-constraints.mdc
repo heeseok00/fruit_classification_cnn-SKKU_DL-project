@@ -22,6 +22,20 @@ alwaysApply: true
 - CNN 레이어 구조 변경 (직접 설계한 것에 한함)
 - Learning rate scheduler 적용
 
+## Submission CSV 파일명 규칙
+
+```
+submission_v{N}_{시도한내용}.csv
+```
+
+- `N`: 몇 번째 submission CSV인지 순서대로 넘버링 (1, 2, 3, ...)
+- `시도한내용`: 해당 버전에서 적용한 주요 변경사항을 `_`로 연결
+- 예시:
+  - `submission_v1_augment_normalize_onecyclelr.csv`
+  - `submission_v2_resblock_gap_adamw.csv`
+  - `submission_v3_dropout_larger_model.csv`
+- 코드 파일명도 동일 버전 번호 사용: `baseline_code_v{N}.py`
+
 ## 체크리스트
 
 코드 작성 시 항상 확인:
@@ -29,3 +43,4 @@ alwaysApply: true
 - [ ] `n_epochs = 1` 설정 여부
 - [ ] `torchvision.models` 또는 외부 pretrained 모델 import 없음
 - [ ] 모델이 `nn.Module`을 직접 상속한 커스텀 CNN인지
+- [ ] submission 파일명이 `submission_v{N}_{시도한내용}.csv` 형식인지
