@@ -17,9 +17,9 @@
 | (참고) v4_batch256 | batch_size 64 → 256 (중단됨) | — | — | 0.87522 |
 | v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | **0.95502** ⬆ |
 | v5 | **AdamW**(weight_decay=1e-4) + label_smoothing | 0.528 | 0.952 | **0.95541** ⬆ |
-| v6 | +RandomPerspective + RandomGrayscale | 0.403 | 0.917 | — |
-| v7 | max_lr 0.01 → 0.005 | 0.519 | 0.943 | — |
-| v8 | 이미지 128 → 160×160 | 0.514 | 0.950 | — |
+| v6 | +RandomPerspective + RandomGrayscale | 0.403 | 0.917 | 0.92008 |
+| v7 | max_lr 0.01 → 0.005 | 0.519 | 0.943 | 0.94737 |
+| v8 | 이미지 128 → 160×160 | 0.514 | 0.950 | 0.95358 |
 
 > Kaggle Public Score를 받은 후 해당 셀을 업데이트하세요.
 
@@ -115,7 +115,7 @@
 ### v6 — Strong Augmentation
 - **파일**: `v6_strong_augment.py`
 - **v5 대비 변경사항**: `RandomPerspective(0.2, p=0.5)` + `RandomGrayscale(p=0.1)` 추가
-- **결과**: Train 0.403 / Valid 0.917 → **v5보다 낮음**
+- **결과**: Train 0.403 / Valid 0.917 / Kaggle **0.92008** → **v5보다 낮음**
 - **분석**: 1-epoch에서 너무 강한 augmentation은 역효과. 모델이 변환된 이미지를 학습할 시간 부족
 
 ---
@@ -123,7 +123,7 @@
 ### v7 — Lower max_lr
 - **파일**: `v7_lower_lr.py`
 - **v5 대비 변경사항**: OneCycleLR `max_lr` 0.01 → **0.005**
-- **결과**: Train 0.519 / Valid 0.943 → **v5보다 낮음**
+- **결과**: Train 0.519 / Valid 0.943 / Kaggle **0.94737** → **v5보다 낮음**
 - **분석**: max_lr을 낮추면 1-epoch 내 수렴이 부족. 0.01이 현재 구성에 더 적합
 
 ---
@@ -131,7 +131,7 @@
 ### v8 — Larger Image 160×160
 - **파일**: `v8_larger_image.py`
 - **v5 대비 변경사항**: 이미지 크기 128×128 → **160×160**
-- **결과**: Train 0.514 / Valid 0.950 → **v5보다 소폭 낮음**
+- **결과**: Train 0.514 / Valid 0.950 / Kaggle **0.95358** → **v5보다 소폭 낮음**
 - **분석**: 이미지 크기 증가는 미미한 차이. 연산량만 늘고 성능 개선 없음
 
 ---
