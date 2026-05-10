@@ -15,7 +15,7 @@
 | v2 | 모델 교체: ResBlock + GAP | 0.507 | 0.944 | **0.94642** |
 | v3 | batch_size 64 → 128 | 0.487 | 0.903 | 0.90627 |
 | (참고) v4_batch256 | batch_size 64 → 256 (중단됨) | — | — | 0.87522 |
-| v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | — (제출 대기) |
+| v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | **0.95502** ⬆ NEW BEST |
 
 > Kaggle Public Score를 받은 후 해당 셀을 업데이트하세요.
 
@@ -90,8 +90,8 @@
   - 나머지(batch_size=64, max_lr=0.01, 모델 구조) v2와 동일
 - **결과**:
   - Train Acc: 0.530, Valid Acc: **0.950** (+0.006 vs v2)
-  - Kaggle Public Score: —
-- **분석**: label smoothing이 효과적. valid_acc가 v2(0.944)→v4(0.950)로 향상
+  - Kaggle Public Score: **0.95502** (+0.0086 vs v2, NEW BEST)
+- **분석**: label smoothing이 효과적. valid_acc가 v2(0.944)→v4(0.950)로 향상. Kaggle에서도 0.946→0.955로 개선 확인
 
 ---
 
