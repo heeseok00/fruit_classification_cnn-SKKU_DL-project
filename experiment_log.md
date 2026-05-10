@@ -16,7 +16,7 @@
 | v3 | batch_size 64 → 128 | 0.487 | 0.903 | 0.90627 |
 | (참고) v4_batch256 | batch_size 64 → 256 (중단됨) | — | — | 0.87522 |
 | v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | **0.95502** ⬆ |
-| v5 | **AdamW**(weight_decay=1e-4) + label_smoothing | — | — | — (실행 중) |
+| v5 | **AdamW**(weight_decay=1e-4) + label_smoothing | 0.528 | 0.952 | **0.95541** ⬆ NEW BEST |
 
 > Kaggle Public Score를 받은 후 해당 셀을 업데이트하세요.
 
@@ -103,8 +103,9 @@
   - `Adam(lr=0.0003)` → **`AdamW(lr=0.0003, weight_decay=1e-4)`**
   - label_smoothing=0.1, 나머지 모두 v4와 동일
 - **결과**:
-  - Train Acc: —, Valid Acc: — (실행 중)
-  - Kaggle Public Score: —
+  - Train Acc: 0.528, Valid Acc: 0.952 (+0.002 vs v4)
+  - Kaggle Public Score: **0.95541** (+0.00039 vs v4, NEW BEST)
+- **분석**: AdamW의 독립적 weight decay가 일반화에 긍정적. label_smoothing과 시너지 확인
 
 ---
 
@@ -133,4 +134,4 @@
 | `submission_v2_resblock_gap_0.94642.csv` | v2 | 제출 완료 |
 | `submission_v3_batch128.csv` | v3 | 제출 완료 |
 | `submission_v4_label_smoothing_0.95502.csv` | v4 | 제출 완료 |
-| `submission_v5_adamw.csv` | v5 | 실행 중 |
+| `submission_v5_adamw_0.95541.csv` | v5 | 제출 완료 |
