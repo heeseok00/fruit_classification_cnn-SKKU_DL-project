@@ -51,6 +51,15 @@ Data/submissions/submission_v{N}_{시도한내용}_{점수}.csv
   - `Data/submissions/submission_v1_augment_normalize_onecyclelr_0.84311.csv`
   - `Data/submissions/submission_v2_resblock_gap_0.86xxx.csv`
 
+## 완료 알림
+
+모든 `.py` 코드 파일 맨 끝에 아래 팝업 알림 코드를 반드시 추가할 것 (`if __name__ == "__main__":` 블록 안쪽 마지막 줄):
+
+```python
+import ctypes
+ctypes.windll.user32.MessageBoxW(0, "학습 완료!", "Done", 1)
+```
+
 ## 체크리스트
 
 코드 작성 시 항상 확인:
