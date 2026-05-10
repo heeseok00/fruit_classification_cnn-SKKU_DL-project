@@ -38,15 +38,16 @@ alwaysApply: true
 ## Submission CSV 파일명 규칙
 
 ```
-submission_v{N}_{시도한내용}.csv
+Data/submissions/submission_v{N}_{시도한내용}.csv
 ```
 
+- 저장 위치: **반드시 `Data/submissions/` 폴더 안에 저장**
 - `N`: ipynb 코드 버전 번호와 동일하게 맞춤
 - `시도한내용`: 해당 버전에서 적용한 주요 변경사항을 `_`로 연결
 - 예시:
-  - `submission_v1_augment_normalize_onecyclelr.csv`
-  - `submission_v2_resblock_gap.csv`
-  - `submission_v3_adamw_dropout.csv`
+  - `Data/submissions/submission_v1_augment_normalize_onecyclelr.csv`
+  - `Data/submissions/submission_v2_resblock_gap.csv`
+  - `Data/submissions/submission_v3_adamw_dropout.csv`
 
 ## 체크리스트
 
