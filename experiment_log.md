@@ -14,12 +14,7 @@
 | v1 | 필수 개선: 1 epoch, augmentation, normalization, OneCycleLR | — | — | **0.84311** |
 | v2 | 모델 교체: ResBlock + GAP | 0.507 | 0.944 | **0.94642** |
 | v3 | batch_size 64 → 128 | 0.487 | 0.903 | — |
-| v4 | batch_size 64 → 256 | — | — | — |
-| v5 | max_lr 0.01 → 0.005 | — | — | — |
-| v6 | max_lr 0.01 → 0.03 | — | — | — |
-| v7 | ResBlock 2개/stage → 3개/stage (더 깊은 모델) | — | — | — |
-| v8 | GAP 이후 Dropout(0.3) 추가 | — | — | — |
-| v9 | Adam → AdamW (weight_decay=1e-4) | — | — | — |
+| v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | — |
 
 > Kaggle Public Score를 받은 후 해당 셀을 업데이트하세요.
 
@@ -79,64 +74,16 @@
 
 ---
 
-### v4 — batch_size 256
-- **파일**: `v4_batch256.py`
+### v4 — Label Smoothing(0.1)
+- **파일**: `v4_label_smoothing.py`
+- **전략 근거**: v3(batch=128)이 v2(batch=64)보다 낮음 → batch_size는 64가 최적. 257클래스의 유사한 과일 분류에서 모델 overconfidence 완화 필요
 - **v2 대비 변경사항**:
-  - `batch_size`: 64 → **256**
+  - `CrossEntropyLoss(label_smoothing=0.1)` 적용 (soft label로 일반화 개선)
+  - 나머지(batch_size=64, max_lr=0.01, 모델 구조) v2와 동일
 - **결과**:
-  - Train Acc: —, Valid Acc: —
+  - Train Acc: 0.530, Valid Acc: **0.950** (+0.006 vs v2)
   - Kaggle Public Score: —
-
----
-
-### v5 — max_lr 낮춤 (0.005)
-- **파일**: `v5_lr0005.py`
-- **v2 대비 변경사항**:
-  - OneCycleLR `max_lr`: 0.01 → **0.005**
-- **결과**:
-  - Train Acc: —, Valid Acc: —
-  - Kaggle Public Score: —
-
----
-
-### v6 — max_lr 높임 (0.03)
-- **파일**: `v6_lr003.py`
-- **v2 대비 변경사항**:
-  - OneCycleLR `max_lr`: 0.01 → **0.03**
-- **결과**:
-  - Train Acc: —, Valid Acc: —
-  - Kaggle Public Score: —
-
----
-
-### v7 — Deeper ResBlock (3개/stage)
-- **파일**: `v7_deeper_resblock.py`
-- **v2 대비 변경사항**:
-  - 각 Stage의 ResBlock 수: 2개 → **3개** (총 8→12개)
-  - Stage 구조: `[ResBlock×2, ResBlock(downsample)]` → `[ResBlock, ResBlock, ResBlock(downsample)]`
-- **결과**:
-  - Train Acc: —, Valid Acc: —
-  - Kaggle Public Score: —
-
----
-
-### v8 — Dropout(0.3)
-- **파일**: `v8_dropout.py`
-- **v2 대비 변경사항**:
-  - GAP → Flatten 이후 **Dropout(p=0.3)** 추가 → FC
-- **결과**:
-  - Train Acc: —, Valid Acc: —
-  - Kaggle Public Score: —
-
----
-
-### v9 — AdamW + weight_decay
-- **파일**: `v9_adamw.py`
-- **v2 대비 변경사항**:
-  - 옵티마이저: `Adam` → **`AdamW(weight_decay=1e-4)`**
-- **결과**:
-  - Train Acc: —, Valid Acc: —
-  - Kaggle Public Score: —
+- **분석**: label smoothing이 효과적. valid_acc가 v2(0.944)→v4(0.950)로 향상
 
 ---
 
@@ -164,9 +111,4 @@
 | `submission_v1_augment_normalize_onecyclelr_0.84311.csv` | v1 | 제출 완료 |
 | `submission_v2_resblock_gap_0.94642.csv` | v2 | 제출 완료 |
 | `submission_v3_batch128.csv` | v3 | 생성 완료 (미제출) |
-| `submission_v4_batch256.csv` | v4 | — |
-| `submission_v5_lr0005.csv` | v5 | — |
-| `submission_v6_lr003.csv` | v6 | — |
-| `submission_v7_deeper_resblock.csv` | v7 | — |
-| `submission_v8_dropout.csv` | v8 | — |
-| `submission_v9_adamw.csv` | v9 | — |
+| `submission_v4_label_smoothing.csv` | v4 | 생성 완료 (미제출) |
