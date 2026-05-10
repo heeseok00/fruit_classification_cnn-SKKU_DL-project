@@ -177,126 +177,126 @@ def resolve_dataset_dir():
     return Path("./data")
 
 
-_dataset_dir = resolve_dataset_dir()
-print(f"Dataset directory: {_dataset_dir}")
-
-with open(_dataset_dir / "classes.txt", encoding="utf-8") as f:
-    classes = [line.strip() for line in f if line.strip()]
-class_to_idx = {c: i for i, c in enumerate(classes)}
-num_classes = len(classes)
-print(f"Number of classes: {num_classes}")
-
-
 # ============================================================
-# Data Loaders
+# Main (required on Windows for num_workers > 0)
 # ============================================================
-batch_size = 64
+if __name__ == "__main__":
 
-train_set = FruitDataset(_dataset_dir / "train", tfm=train_tfm, class_to_idx=class_to_idx)
-train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
+    _dataset_dir = resolve_dataset_dir()
+    print(f"Dataset directory: {_dataset_dir}")
 
-valid_set = FruitDataset(_dataset_dir / "valid", tfm=test_tfm, class_to_idx=class_to_idx)
-valid_loader = DataLoader(valid_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    with open(_dataset_dir / "classes.txt", encoding="utf-8") as f:
+        classes = [line.strip() for line in f if line.strip()]
+    class_to_idx = {c: i for i, c in enumerate(classes)}
+    num_classes = len(classes)
+    print(f"Number of classes: {num_classes}")
 
+    # ============================================================
+    # Data Loaders
+    # ============================================================
+    batch_size = 64
 
-# ============================================================
-# Training Setup
-# ============================================================
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Device: {device}")
+    train_set = FruitDataset(_dataset_dir / "train", tfm=train_tfm, class_to_idx=class_to_idx)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
 
-n_epochs = 1  # assignment constraint: 1 epoch only
+    valid_set = FruitDataset(_dataset_dir / "valid", tfm=test_tfm, class_to_idx=class_to_idx)
+    valid_loader = DataLoader(valid_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
-model = Classifier(num_classes).to(device)
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0003)
+    # ============================================================
+    # Training Setup
+    # ============================================================
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Device: {device}")
 
-# OneCycleLR: ramps LR up then down over all batches in 1 epoch
-scheduler = torch.optim.lr_scheduler.OneCycleLR(
-    optimizer,
-    max_lr=0.01,
-    steps_per_epoch=len(train_loader),
-    epochs=n_epochs,
-)
+    n_epochs = 1  # assignment constraint: 1 epoch only
 
-best_acc = 0
-_exp_name = "fruit_classification_v1"
+    model = Classifier(num_classes).to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0003)
 
+    # OneCycleLR: ramps LR up then down over all batches in 1 epoch
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(
+        optimizer,
+        max_lr=0.01,
+        steps_per_epoch=len(train_loader),
+        epochs=n_epochs,
+    )
 
-# ============================================================
-# Training & Validation Loop
-# ============================================================
-for epoch in range(n_epochs):
+    best_acc = 0
+    _exp_name = "fruit_classification_v1"
 
-    # ---------- Training ----------
-    model.train()
-    train_loss, train_accs = [], []
+    # ============================================================
+    # Training & Validation Loop
+    # ============================================================
+    for epoch in range(n_epochs):
 
-    for batch in tqdm(train_loader):
-        imgs, labels = batch
+        # ---------- Training ----------
+        model.train()
+        train_loss, train_accs = [], []
 
-        optimizer.zero_grad()
-        logits = model(imgs.to(device))
-        loss = criterion(logits, labels.to(device))
-        loss.backward()
-        nn.utils.clip_grad_norm_(model.parameters(), max_norm=10)
-        optimizer.step()
-        scheduler.step()  # update LR after every batch
+        for batch in tqdm(train_loader):
+            imgs, labels = batch
 
-        acc = (logits.argmax(dim=-1) == labels.to(device)).float().mean()
-        train_loss.append(loss.item())
-        train_accs.append(acc)
-
-    train_loss = sum(train_loss) / len(train_loss)
-    train_acc  = sum(train_accs) / len(train_accs)
-    print(f"[ Train | {epoch + 1:03d}/{n_epochs:03d} ] loss = {train_loss:.5f}, acc = {train_acc:.5f}")
-
-    # ---------- Validation ----------
-    model.eval()
-    valid_loss, valid_accs = [], []
-
-    for batch in tqdm(valid_loader):
-        imgs, labels = batch
-        with torch.no_grad():
+            optimizer.zero_grad()
             logits = model(imgs.to(device))
-        loss = criterion(logits, labels.to(device))
-        acc  = (logits.argmax(dim=-1) == labels.to(device)).float().mean()
-        valid_loss.append(loss.item())
-        valid_accs.append(acc)
+            loss = criterion(logits, labels.to(device))
+            loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), max_norm=10)
+            optimizer.step()
+            scheduler.step()  # update LR after every batch
 
-    valid_loss = sum(valid_loss) / len(valid_loss)
-    valid_acc  = sum(valid_accs) / len(valid_accs)
-    tag = " -> best" if valid_acc > best_acc else ""
-    print(f"[ Valid | {epoch + 1:03d}/{n_epochs:03d} ] loss = {valid_loss:.5f}, acc = {valid_acc:.5f}{tag}")
+            acc = (logits.argmax(dim=-1) == labels.to(device)).float().mean()
+            train_loss.append(loss.item())
+            train_accs.append(acc)
 
-    if valid_acc > best_acc:
-        print(f"Best model found at epoch {epoch + 1}, saving model")
-        torch.save(model.state_dict(), f"{_exp_name}_best.ckpt")
-        best_acc = valid_acc
+        train_loss = sum(train_loss) / len(train_loss)
+        train_acc  = sum(train_accs) / len(train_accs)
+        print(f"[ Train | {epoch + 1:03d}/{n_epochs:03d} ] loss = {train_loss:.5f}, acc = {train_acc:.5f}")
 
+        # ---------- Validation ----------
+        model.eval()
+        valid_loss, valid_accs = [], []
 
-# ============================================================
-# Testing
-# ============================================================
-test_set    = FruitDataset(_dataset_dir / "test", tfm=test_tfm, is_test=True)
-test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+        for batch in tqdm(valid_loader):
+            imgs, labels = batch
+            with torch.no_grad():
+                logits = model(imgs.to(device))
+            loss = criterion(logits, labels.to(device))
+            acc  = (logits.argmax(dim=-1) == labels.to(device)).float().mean()
+            valid_loss.append(loss.item())
+            valid_accs.append(acc)
 
-model_best = Classifier(num_classes).to(device)
-model_best.load_state_dict(torch.load(f"{_exp_name}_best.ckpt"))
-model_best.eval()
+        valid_loss = sum(valid_loss) / len(valid_loss)
+        valid_acc  = sum(valid_accs) / len(valid_accs)
+        tag = " -> best" if valid_acc > best_acc else ""
+        print(f"[ Valid | {epoch + 1:03d}/{n_epochs:03d} ] loss = {valid_loss:.5f}, acc = {valid_acc:.5f}{tag}")
 
-prediction, file_ids = [], []
-with torch.no_grad():
-    for data, _, file_id in test_loader:
-        test_pred  = model_best(data.to(device))
-        test_label = np.argmax(test_pred.cpu().data.numpy(), axis=1)
-        prediction += test_label.tolist()
-        file_ids   += list(file_id)
+        if valid_acc > best_acc:
+            print(f"Best model found at epoch {epoch + 1}, saving model")
+            torch.save(model.state_dict(), f"{_exp_name}_best.ckpt")
+            best_acc = valid_acc
 
+    # ============================================================
+    # Testing
+    # ============================================================
+    test_set    = FruitDataset(_dataset_dir / "test", tfm=test_tfm, is_test=True)
+    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
-# ============================================================
-# Submission
-# ============================================================
-df = pd.DataFrame({"ID": file_ids, "Category": prediction})
-df.to_csv("submission_v1_augment_normalize_onecyclelr.csv", index=False)
-print(f"Wrote submission_v1_augment_normalize_onecyclelr.csv with {len(df)} rows")
+    model_best = Classifier(num_classes).to(device)
+    model_best.load_state_dict(torch.load(f"{_exp_name}_best.ckpt"))
+    model_best.eval()
+
+    prediction, file_ids = [], []
+    with torch.no_grad():
+        for data, _, file_id in test_loader:
+            test_pred  = model_best(data.to(device))
+            test_label = np.argmax(test_pred.cpu().data.numpy(), axis=1)
+            prediction += test_label.tolist()
+            file_ids   += list(file_id)
+
+    # ============================================================
+    # Submission
+    # ============================================================
+    df = pd.DataFrame({"ID": file_ids, "Category": prediction})
+    df.to_csv("submission_v1_augment_normalize_onecyclelr.csv", index=False)
+    print(f"Wrote submission_v1_augment_normalize_onecyclelr.csv with {len(df)} rows")
