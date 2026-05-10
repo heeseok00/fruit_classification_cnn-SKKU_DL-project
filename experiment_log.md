@@ -20,6 +20,8 @@
 | v6 | +RandomPerspective + RandomGrayscale | 0.403 | 0.917 | 0.92008 |
 | v7 | max_lr 0.01 → 0.005 | 0.519 | 0.943 | 0.94737 |
 | v8 | 이미지 128 → 160×160 | 0.514 | 0.950 | 0.95358 |
+| v9 | stage5 ResBlock 추가 | 0.497 | 0.948 | — |
+| v10 | AdamW + 160×160 조합 | 0.514 | 0.950 | — |
 
 > Kaggle Public Score를 받은 후 해당 셀을 업데이트하세요.
 
@@ -136,6 +138,22 @@
 
 ---
 
+### v9 — Deeper Model (stage5)
+- **파일**: `v9_deeper_model.py`
+- **v5 대비 변경사항**: `stage5 = Sequential(ResBlock(512,512), ResBlock(512,512))` 추가
+- **결과**: Train 0.497 / Valid 0.948 → **v5보다 낮음**
+- **분석**: 1-epoch에서 더 깊은 모델은 수렴이 더 어려움. 파라미터 증가 대비 학습 시간 부족
+
+---
+
+### v10 — AdamW + 160×160 조합
+- **파일**: `v10_adamw_160.py`
+- **v5 대비 변경사항**: 이미지 크기 128 → **160×160** (v5 AdamW 구성 유지)
+- **결과**: Train 0.514 / Valid 0.950 → **v5보다 소폭 낮음**
+- **분석**: v8(160×160 단독)과 동일 결과. AdamW와의 시너지 없음. 128×128이 최적
+
+---
+
 ## 주요 인사이트
 
 ### 1 Epoch 학습의 특성
@@ -165,3 +183,5 @@
 | `submission_v6_strong_augment.csv` | v6 | 생성 완료 |
 | `submission_v7_lower_lr.csv` | v7 | 생성 완료 |
 | `submission_v8_larger_image.csv` | v8 | 생성 완료 |
+| `submission_v9_deeper_model.csv` | v9 | 생성 완료 |
+| `submission_v10_adamw_160.csv` | v10 | 생성 완료 |
