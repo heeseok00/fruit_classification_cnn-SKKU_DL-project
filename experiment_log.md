@@ -15,7 +15,8 @@
 | v2 | 모델 교체: ResBlock + GAP | 0.507 | 0.944 | **0.94642** |
 | v3 | batch_size 64 → 128 | 0.487 | 0.903 | 0.90627 |
 | (참고) v4_batch256 | batch_size 64 → 256 (중단됨) | — | — | 0.87522 |
-| v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | **0.95502** ⬆ NEW BEST |
+| v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | **0.95502** ⬆ |
+| v5 | **AdamW**(weight_decay=1e-4) + label_smoothing | — | — | — (실행 중) |
 
 > Kaggle Public Score를 받은 후 해당 셀을 업데이트하세요.
 
@@ -95,6 +96,18 @@
 
 ---
 
+### v5 — AdamW + weight_decay=1e-4
+- **파일**: `v5_adamw.py`
+- **전략 근거**: v4(label_smoothing)로 Kaggle 0.95502 달성. train 0.530 << valid 0.950 → underfitting. AdamW는 weight decay를 gradient와 분리해 적용하여 Adam보다 정규화 효과 강함
+- **v4 대비 변경사항**:
+  - `Adam(lr=0.0003)` → **`AdamW(lr=0.0003, weight_decay=1e-4)`**
+  - label_smoothing=0.1, 나머지 모두 v4와 동일
+- **결과**:
+  - Train Acc: —, Valid Acc: — (실행 중)
+  - Kaggle Public Score: —
+
+---
+
 ## 주요 인사이트
 
 ### 1 Epoch 학습의 특성
@@ -118,5 +131,6 @@
 |--------|------|------|
 | `submission_v1_augment_normalize_onecyclelr_0.84311.csv` | v1 | 제출 완료 |
 | `submission_v2_resblock_gap_0.94642.csv` | v2 | 제출 완료 |
-| `submission_v3_batch128.csv` | v3 | 생성 완료 (미제출) |
-| `submission_v4_label_smoothing.csv` | v4 | 생성 완료 (미제출) |
+| `submission_v3_batch128.csv` | v3 | 제출 완료 |
+| `submission_v4_label_smoothing_0.95502.csv` | v4 | 제출 완료 |
+| `submission_v5_adamw.csv` | v5 | 실행 중 |
