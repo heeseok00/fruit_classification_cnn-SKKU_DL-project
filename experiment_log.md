@@ -13,8 +13,9 @@
 | baseline (v0) | 원본 코드 (10 epoch, 정규화 없음) | — | — | — |
 | v1 | 필수 개선: 1 epoch, augmentation, normalization, OneCycleLR | — | — | **0.84311** |
 | v2 | 모델 교체: ResBlock + GAP | 0.507 | 0.944 | **0.94642** |
-| v3 | batch_size 64 → 128 | 0.487 | 0.903 | — |
-| v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | — |
+| v3 | batch_size 64 → 128 | 0.487 | 0.903 | 0.90627 |
+| (참고) v4_batch256 | batch_size 64 → 256 (중단됨) | — | — | 0.87522 |
+| v4 | **Label Smoothing(0.1)** 적용 | 0.530 | **0.950** | — (제출 대기) |
 
 > Kaggle Public Score를 받은 후 해당 셀을 업데이트하세요.
 
@@ -63,13 +64,20 @@
 
 ---
 
+### (참고) v4_batch256 — batch_size 256 (중단된 실험)
+- **v2 대비 변경사항**: `batch_size`: 64 → **256**
+- **결과**: Kaggle Public Score: **0.87522**
+- **분석**: batch 클수록 1-epoch에서 손해 명확히 확인 (v2: 0.946 > v3: 0.906 > batch256: 0.875)
+
+---
+
 ### v3 — batch_size 128
 - **파일**: `v3_batch128.py`
 - **v2 대비 변경사항**:
   - `batch_size`: 64 → **128**
 - **결과**:
   - Train Acc: 0.487, Valid Acc: 0.903
-  - Kaggle Public Score: —
+  - Kaggle Public Score: **0.90627**
 - **분석**: batch_size가 커지면 epoch당 gradient update 횟수(step 수)가 줄어들어 1-epoch에서 오히려 불리. v2(valid 0.944)보다 valid acc 감소
 
 ---
