@@ -24,16 +24,16 @@ alwaysApply: true
 
 ## 코드 파일 관리 규칙
 
-- **형식**: `v2`부터는 반드시 `.ipynb` (Jupyter Notebook)으로 작성
+- **형식**: `.ipynb` (Jupyter Notebook)으로 작성
 - **파일명**: `v{N}_{코드설명}.ipynb`
-  - `N`: 버전 번호, 1씩 증가 (v2, v3, v4, ...)
+  - `N`: 버전 번호, 1부터 시작해서 1씩 증가 (v1, v2, v3, ...)
   - `코드설명`: 해당 버전의 주요 변경사항을 `_`로 연결
 - **버전 관리**: 코드 구조를 크게 바꿀 때마다 이전 버전을 복사해서 새 파일 생성
 - **예시**:
+  - `v1_augment_normalize_onecyclelr.ipynb`
   - `v2_resblock_gap.ipynb`
   - `v3_adamw_dropout.ipynb`
-  - `v4_larger_model_fp16.ipynb`
-- 기존 파일 (`baseline_code_v0.py`, `baseline_code_v1.py`)은 참조용으로 유지
+- 기존 파일 (`baseline_code_v0.py`, `baseline_code_v1.py`)은 참조용으로 유지하고 건드리지 않음
 
 ## Submission CSV 파일명 규칙
 
@@ -41,7 +41,7 @@ alwaysApply: true
 submission_v{N}_{시도한내용}.csv
 ```
 
-- `N`: 코드 버전 번호와 동일하게 맞춤
+- `N`: ipynb 코드 버전 번호와 동일하게 맞춤
 - `시도한내용`: 해당 버전에서 적용한 주요 변경사항을 `_`로 연결
 - 예시:
   - `submission_v1_augment_normalize_onecyclelr.csv`
