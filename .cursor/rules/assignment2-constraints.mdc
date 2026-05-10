@@ -38,16 +38,18 @@ alwaysApply: true
 ## Submission CSV 파일명 규칙
 
 ```
-Data/submissions/submission_v{N}_{시도한내용}.csv
+Data/submissions/submission_v{N}_{시도한내용}_{점수}.csv
 ```
 
 - 저장 위치: **반드시 `Data/submissions/` 폴더 안에 저장**
 - `N`: ipynb 코드 버전 번호와 동일하게 맞춤
 - `시도한내용`: 해당 버전에서 적용한 주요 변경사항을 `_`로 연결
+- `점수`: 사용자가 Kaggle Public Score 스크린샷을 보내주면 파일명 뒤에 점수를 붙여 rename
+- 점수를 받기 전 초기 저장명: `submission_v{N}_{시도한내용}.csv`
+- 점수 확인 후 최종명: `submission_v{N}_{시도한내용}_{score}.csv`
 - 예시:
-  - `Data/submissions/submission_v1_augment_normalize_onecyclelr.csv`
-  - `Data/submissions/submission_v2_resblock_gap.csv`
-  - `Data/submissions/submission_v3_adamw_dropout.csv`
+  - `Data/submissions/submission_v1_augment_normalize_onecyclelr_0.84311.csv`
+  - `Data/submissions/submission_v2_resblock_gap_0.86xxx.csv`
 
 ## 체크리스트
 
